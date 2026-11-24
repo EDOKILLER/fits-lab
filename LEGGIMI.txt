@@ -1,0 +1,131 @@
+FITS LAB 1.7 - laboratorio interattivo per i FITS di tutti i telescopi
+© 2026 Edoardo Battistel
+=======================================================================
+
+COS'È
+Un programma separato da AutoAstroPipe, più avanzato: si lavora un file alla volta
+guardando a sinistra l'originale e a destra il risultato, che cambia mentre si
+muovono i cursori. Ogni operazione diventa un PASSO di una ricetta: i passi si possono
+modificare, spegnere, spostare o eliminare in qualsiasi momento, e il file originale
+non viene mai toccato.
+
+INSTALLAZIONE (Ubuntu)
+    cd ~/Claude/Astropy/programma_fitslab/versione_1.7
+    bash crea_eseguibile_ubuntu.sh
+Lo script prova il programma (autotest), crea l'eseguibile, lo riprova, lo installa
+in ~/.local/bin/FITSLab e mette l'icona (beuta con la nebulosa) nel menu e sulla
+Scrivania. Se l'autotest fallisce, mandare autotest.txt.
+Per Windows: crea_eseguibile_windows.bat (doppio clic).
+Senza compilare:  python3 fitslab.py [file.fits]
+
+FILE E TELESCOPI
+- Immagini FITS di qualsiasi missione: Hubble, JWST, Euclid (VIS, NISP, mosaici MER),
+  Roman (.asdf, convertiti in automatico), Spitzer, Herschel, WISE, SPHEREx (si sceglie
+  la banda D1-D6), Pan-STARRS (scala asinh convertita in flusso), SDSS, Legacy Survey,
+  DES, DSS, 2MASS, GALEX, Swift, ZTF, TESS, Kepler, Chandra/XMM/eROSITA (immagini),
+  VLA/NVSS/FIRST, LOFAR, ALMA, MeerKAT, ASKAP (anche file a 4 assi), Planck.
+- Cubi (radio, ALMA, IFU): un piano, oppure media o somma (momento 0) di un intervallo.
+- Planck (e altre mappe HEALPix): tutto il cielo in proiezione di Mollweide, oppure un
+  ritaglio attorno a un nome (NED) o a coordinate galattiche/equatoriali/eclittiche.
+- File compressi .fits.gz, .fits.fz.
+
+FILE GRANDI
+- «Riduzione» nella barra: auto (immagine di lavoro fino a 3000 pixel di lato), 1, 2, 4,
+  8, 16, 32 volte.
+- «Zona…»: disegni un rettangolo sull'originale e quella zona viene caricata a piena
+  risoluzione. «Immagine intera» torna indietro.
+- «Oggetti»: SIMBAD + NED (e Messier/NGC/IC se manca la rete) scritti sull'originale,
+  per scegliere meglio la zona.
+- Salvando si può rifare la ricetta a PIENA QUALITÀ sul file intero (o sulla zona).
+
+OPERAZIONI DELLA 1.0
+Scienza (i dati restano lineari e misurabili):
+- Ritaglio: rettangolo disegnato, «togli i bordi vuoti», «solo la zona piena».
+- Binning 2-8: somma per conteggi/elettroni, media per brillanza (MJy/sr, Jy/beam, K).
+- Pixel difettosi: pixel caldi/freddi (non tocca i picchi delle stelle), raggi cosmici
+  (L.A.Cosmic), riempimento dei buchi interni.
+- Fondo e gradiente: polinomio come il DBE di PixInsight (campioni automatici e/o punti
+  a mano: modalità mouse «Punti», tasto destro per toglierli) o griglia di mediane;
+  sottrazione o divisione; si può vedere il modello del fondo.
+- Riduzione del rumore: multiscala (wavelet à trous, come MultiscaleLinearTransform),
+  gaussiano, mediano, wavelet BayesShrink, variazione totale, non-local means; con
+  protezione del segnale. Dopo la riduzione il FITS scientifico porta FLABDNS = T.
+Estetica (da qui in poi il risultato è solo per la visione):
+- Stiramento: automatico (STF di PixInsight), istogramma nero/mezzitoni/bianco con
+  istogramma disegnato, asinh, logaritmico, radice, equalizzazione.
+- Curve: editor a punti, curve pronte, contrasto, luminosità.
+- Tavolozza: oro, verde acqua, tinta a scelta, inferno, magma, viridis...
+
+REFERTO DI QUALITÀ (scheda «Qualità»)
+Copertura, buchi, fondo, rumore da pixel a pixel, dinamica, gradiente, pixel caldi,
+saturazione, numero di stelle, FWHM (pixel e secondi d'arco), S/R e allungamento delle
+stelle; verde = buono, arancio = da controllare, rosso = scarso. «Misura il risultato»
+mette accanto i valori dopo la lavorazione.
+
+USCITE (sempre in inglese) nella cartella scelta, di solito <nome>_fitslab/:
+  science/<nome>_science.fits        dati lineari dopo i passi «scienza», con WCS
+                                     aggiornato (anche dopo ritagli e binning, anche con
+                                     distorsioni SIP), unità e intestazione originale,
+                                     HISTORY con tutti i passi
+  aesthetic/<nome>_aesthetic.fits    immagine stirata (B/N o RGB) con WCS
+  aesthetic/<nome>_aesthetic.png / .tif (16 bit) / .jpg / _forum.jpg
+  <nome>_recipe.json                 la ricetta (si riapplica con File → Applica una ricetta)
+  <nome>_quality.txt                 referto prima/dopo
+
+COMANDI
+Rotella = zoom (le due immagini restano allineate), trascinare = spostare (anche col
+tasto centrale), F = adatta, F9 = mostra/nasconde il pannello, Ctrl+Z = toglie l'ultimo
+passo, doppio clic su un passo = modificalo, clic su un passo = mostra il risultato
+fino a quel passo. Opzioni → Lingua (italiano/inglese), Dimensione testo (100-200 %).
+
+NOVITÀ 1.1 - STRUMENTI ESTERNI GRATUITI (menu Strumenti → Strumenti esterni…)
+- StarNet2 (toglie le stelle o tiene solo le stelle, anche sui dati lineari), GraXpert
+  (fondo e rumore con AI). Si scaricano dai siti ufficiali all'ultima versione e si installano in
+  ~/.local/share/fitslab/strumenti, senza password; StarNet2 con controllo SHA-256.
+- Si usano come passi della ricetta (gruppo «Strumenti esterni gratuiti»). Sono lenti:
+  l'anteprima parte solo premendo «Calcola l'anteprima». Se uno strumento manca, FITS Lab
+  propone di installarlo.
+- Una volta al giorno FITS Lab controlla le versioni e aggiorna da solo quelli installati
+  (si può spegnere dal menu Strumenti).
+- Oggetti nel campo: prima i nomi di catalogo veri (M 51, NGC 5195), non più le regioni
+  interne come «NGC 5194:[CCM69] 095».
+
+NOVITÀ 1.7
+- Corretti i due errori dell'autotest della 1.6: la deconvoluzione aggiungeva ~3 % di flusso
+  (lo smorzamento non conserva il flusso: ora la differenza su scala grande viene tolta) e il
+  controllo «solo strumenti gratuiti» usava un nome ridefinito nell'autotest.
+
+NOVITÀ 1.6
+- Nuova operazione «Deconvoluzione (nitidezza)» (famiglia Scienza): Richardson-Lucy con la PSF
+  misurata sulle stelle dell'immagine, oppure gaussiana o Moffat con FWHM a scelta; smorzamento
+  sul rumore, protezione dagli aloni scuri, solo dove c'è segnale. Conserva il flusso (prova:
+  FWHM 5,3 -> 3,2 px, flusso x1,000 anche su scala locale, rumore del fondo invariato). Nel FITS scientifico: FLABDCV.
+- Tolto Seti Astro Suite Pro: i modelli di Cosmic Clarity hanno una licenza proprietaria ristretta.
+  Regola: solo strumenti e modelli gratuiti (licenza libera o freeware). La cartella
+  ~/.local/share/fitslab/strumenti/saspro si può cancellare.
+
+NOVITÀ 1.5
+- Caselle di spunta e pallini di scelta disegnati dal programma, grandi quanto il testo
+  (quelli del tema di Tk erano di pochi pixel).
+
+NOVITÀ 1.4
+- Scheda «Operazioni»: pulsanti e parametri scorrono insieme con una barra larga e ben visibile
+  (anche con la rotella); i nomi dei pulsanti vanno a capo invece di essere tagliati; scegliendo
+  un'operazione l'area scorre da sola fino ai suoi parametri.
+
+NOVITÀ 1.3
+- Il pannello dei controlli ha una larghezza fissa (32 % della finestra, si cambia trascinando
+  la barretta grigia a sinistra del pannello; F9 lo nasconde): non può più coprire le immagini.
+- GraXpert restituisce i valori normalizzati 0-1: ora vengono riportati esattamente alla scala
+  originale (retta stimata sui pixel), così il FITS scientifico resta nelle unità giuste.
+
+NOVITÀ 1.2
+- Immagini più grandi. «Adatta» inquadra solo la zona che
+  contiene dati (utile con i drizzle Hubble/JWST, che hanno grandi bordi vuoti).
+- Strumenti esterni: ricevono solo il rettangolo con i dati; dopo ogni esecuzione ingresso,
+  uscita e messaggi restano in ~/.local/share/fitslab/strumenti/last_<operazione>/ (command.txt).
+- Oggetti nel campo: anche una ricerca SIMBAD dei soli oggetti molto studiati (M 51 in testa).
+
+PROSSIME VERSIONI (piano)
+Stacking (tabella con misure e spunte, allineamento, pesi, scarto) · colore (più filtri,
+tavolozze SHO/HOO, calibrazione con Gaia) · analisi scientifiche · maschere e livelli.

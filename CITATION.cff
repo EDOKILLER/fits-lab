@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below, and credit the data providers listed in README.md."
+title: "FITS Lab: a non-destructive FITS editing lab: science-grade and aesthetic outputs from the same recipe"
+authors:
+  - family-names: Battistel
+    given-names: Edoardo
+version: "1.7"
+date-released: 2026-11-15
+license: BSD-3-Clause
+repository-code: "https://github.com/EDOKILLER/fits-lab"
+keywords:
+  - FITS
+  - image processing
+  - astrophotography
+  - WCS
+  - HEALPix
+  - Euclid
+  - Roman
